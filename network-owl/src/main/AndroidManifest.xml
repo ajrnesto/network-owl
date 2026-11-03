@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application>
+        <activity
+            android:name="io.github.ajrnesto.networkowl.ui.NetworkOwlActivity"
+            android:exported="false"
+            android:label="@string/network_owl_label"
+            android:launchMode="singleTask"
+            android:taskAffinity="io.github.ajrnesto.networkowl.task"
+            android:theme="@style/NetworkOwl.Theme" />
+    </application>
+</manifest>
