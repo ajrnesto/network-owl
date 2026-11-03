@@ -1,0 +1,85 @@
+<resources>
+    <string name="network_owl_label">Network Owl</string>
+    <string name="network_owl_shortcut_label">Network Owl</string>
+    <string name="network_owl_notification_channel">Network Owl</string>
+    <string name="network_owl_notification_title">%1$d HTTP requests recorded</string>
+
+    <string name="network_owl_list_title">Network</string>
+    <string name="network_owl_list_empty">No requests yet</string>
+    <string name="network_owl_clear">Clear</string>
+    <string name="network_owl_back">Back</string>
+    <string name="network_owl_more">More</string>
+    <string name="network_owl_share_text">Share as text</string>
+    <string name="network_owl_copy_curl">Copy as cURL</string>
+
+    <string name="network_owl_tab_overview">Overview</string>
+    <string name="network_owl_tab_request">Request</string>
+    <string name="network_owl_tab_response">Response</string>
+
+    <string name="network_owl_field_url">URL</string>
+    <string name="network_owl_field_method">Method</string>
+    <string name="network_owl_field_status">Status</string>
+    <string name="network_owl_field_protocol">Protocol</string>
+    <string name="network_owl_field_requested_at">Requested at</string>
+    <string name="network_owl_field_duration">Duration</string>
+    <string name="network_owl_field_request_size">Request size</string>
+    <string name="network_owl_field_response_size">Response size</string>
+    <string name="network_owl_field_error">Error</string>
+
+    <string name="network_owl_status_pending">Pending</string>
+    <string name="network_owl_status_failed">Failed</string>
+
+    <string name="network_owl_section_headers_count">Headers · %1$d</string>
+    <string name="network_owl_value_redacted">Redacted</string>
+    <string name="network_owl_value_empty">Empty</string>
+    <string name="network_owl_show_all">Show all</string>
+    <string name="network_owl_show_less">Show less</string>
+    <string name="network_owl_section_body">Body</string>
+    <string name="network_owl_no_headers">No headers</string>
+    <string name="network_owl_body_empty">Empty body</string>
+    <string name="network_owl_body_loading">Waiting for the body…</string>
+    <string name="network_owl_body_binary">Binary content, %1$s</string>
+    <string name="network_owl_body_not_captured">Body not captured (streamed or unreadable)</string>
+    <string name="network_owl_body_truncated">Truncated, the full body is %1$s</string>
+    <string name="network_owl_view_code">Code</string>
+    <string name="network_owl_view_tree">Tree</string>
+    <string name="network_owl_view_table">Table</string>
+    <string name="network_owl_wrap">Wrap</string>
+    <string name="network_owl_table_key">Key</string>
+    <string name="network_owl_table_value">Value</string>
+    <plurals name="network_owl_json_keys">
+        <item quantity="one">%1$d key</item>
+        <item quantity="other">%1$d keys</item>
+    </plurals>
+    <plurals name="network_owl_json_items">
+        <item quantity="one">%1$d item</item>
+        <item quantity="other">%1$d items</item>
+    </plurals>
+    <string name="network_owl_section_network">Network</string>
+    <string name="network_owl_section_storage">Storage</string>
+    <string name="network_owl_storage_title">Storage</string>
+    <string name="network_owl_storage_datastore">DataStore</string>
+    <string name="network_owl_storage_prefs">SharedPreferences</string>
+    <string name="network_owl_storage_no_datastore">No DataStore registered. Call NetworkOwl.register(name, dataStore).</string>
+    <string name="network_owl_storage_no_prefs">No SharedPreferences files</string>
+    <plurals name="network_owl_storage_keys">
+        <item quantity="one">%1$d key</item>
+        <item quantity="other">%1$d keys</item>
+    </plurals>
+    <string name="network_owl_storage_keys_title">Keys · %1$d</string>
+    <string name="network_owl_storage_empty">No keys</string>
+    <string name="network_owl_storage_loading">Loading…</string>
+    <string name="network_owl_storage_write_failed">Couldn\'t save</string>
+    <string name="network_owl_storage_redacted">This value is redacted. You can still delete it.</string>
+    <string name="network_owl_storage_read_only">This type can\'t be edited here. You can still delete it.</string>
+    <string name="network_owl_storage_save">Save</string>
+    <string name="network_owl_storage_delete_key">Delete key</string>
+    <string name="network_owl_storage_cancel">Close</string>
+    <string name="network_owl_kind_text">text</string>
+    <string name="network_owl_kind_number">number</string>
+    <string name="network_owl_kind_boolean">boolean</string>
+    <string name="network_owl_kind_null">null · any JSON</string>
+    <string name="network_owl_edit_fields">Fields</string>
+    <string name="network_owl_edit_raw">Raw</string>
+    <string name="network_owl_awaiting_response">Waiting for the response…</string>
+</resources>
