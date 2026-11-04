@@ -67,6 +67,14 @@ publishing {
         register<MavenPublication>("release") {
             artifactId = "network-owl"
             afterEvaluate { from(components["release"]) }
+            pom {
+                licenses {
+                    license {
+                        name = "Apache-2.0"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+            }
         }
     }
     repositories {

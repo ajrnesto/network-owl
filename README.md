@@ -14,8 +14,8 @@ In-app HTTP inspector for OkHttp-based Android apps, themed by the host app.
 "productionImplementation"("io.github.ajrnesto.networkowl:network-owl-noop:0.1.0")
 ```
 
-Packages are private on GitHub Packages, so the consuming project needs the repository and a
-token with `read:packages`:
+GitHub Packages requires a token even for public packages, so the consuming project needs the
+repository and a token with `read:packages`:
 
 ```kotlin
 // settings.gradle.kts
@@ -69,3 +69,7 @@ includeBuild("../network-owl")
 
 The public API (`NetworkOwl`, `NetworkOwlConfig` and its theme types) is declared in both modules.
 Change both together.
+
+## License
+
+[Apache-2.0](LICENSE)
