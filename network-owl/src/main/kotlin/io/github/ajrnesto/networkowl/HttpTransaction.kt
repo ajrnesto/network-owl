@@ -19,6 +19,20 @@ internal data class HttpTransaction(
             else -> Status.Complete
         }
 
+    val badge: String?
+        get() = when (status) {
+            Status.Pending -> null
+            Status.Failed -> "ERR"
+            Status.Complete -> response?.code.toString()
+        }
+
+    fun matches(keyword: String): Boolean {
+        val needle = keyword.trim()
+        if (needle.isEmpty()) return true
+        return listOfNotNull(method, url, badge, error)
+            .any { it.contains(needle, ignoreCase = true) }
+    }
+
     enum class Status { Pending, Complete, Failed }
 }
 

@@ -95,6 +95,7 @@ private fun NetworkSection(bottomBar: @Composable () -> Unit) {
     val store = NetworkOwl.store
     val transactions by store.transactions.collectAsStateWithLifecycle()
     var selectedId by rememberSaveable { mutableStateOf<Long?>(null) }
+    var query by rememberSaveable { mutableStateOf("") }
     var jsonMode by rememberSaveable { mutableStateOf(JsonViewMode.Code) }
     var wrapCode by rememberSaveable { mutableStateOf(true) }
     val shownId = selectedId?.takeIf { id -> transactions.any { it.id == id } }
@@ -105,6 +106,8 @@ private fun NetworkSection(bottomBar: @Composable () -> Unit) {
         if (selected == null) {
             TransactionListScreen(
                 transactions = transactions,
+                query = query,
+                onQueryChange = { query = it },
                 onSelect = { selectedId = it },
                 onClear = store::clear,
                 bottomBar = bottomBar,

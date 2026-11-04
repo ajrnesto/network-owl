@@ -6,6 +6,9 @@
 
     <string name="network_owl_list_title">Network</string>
     <string name="network_owl_list_empty">No requests yet</string>
+    <string name="network_owl_list_no_matches">No requests match “%1$s”</string>
+    <string name="network_owl_search_hint">Filter by method, URL or status</string>
+    <string name="network_owl_search_clear">Clear filter</string>
     <string name="network_owl_clear">Clear</string>
     <string name="network_owl_back">Back</string>
     <string name="network_owl_more">More</string>
