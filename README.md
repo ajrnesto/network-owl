@@ -10,15 +10,15 @@ In-app HTTP inspector for OkHttp-based Android apps, themed by the host app.
 
 ```kotlin
 // build.gradle.kts of the app
-"stagingImplementation"("io.github.ajrnesto.networkowl:network-owl:0.2.0")
-"productionImplementation"("io.github.ajrnesto.networkowl:network-owl-noop:0.2.0")
+"stagingImplementation"("io.github.ajrnesto.networkowl:network-owl:0.3.0")
+"productionImplementation"("io.github.ajrnesto.networkowl:network-owl-noop:0.3.0")
 ```
 
 Without flavors, split on build type instead:
 
 ```kotlin
-debugImplementation("io.github.ajrnesto.networkowl:network-owl:0.2.0")
-releaseImplementation("io.github.ajrnesto.networkowl:network-owl-noop:0.2.0")
+debugImplementation("io.github.ajrnesto.networkowl:network-owl:0.3.0")
+releaseImplementation("io.github.ajrnesto.networkowl:network-owl-noop:0.3.0")
 ```
 
 GitHub Packages requires a token even for public packages, so the consuming project needs the
