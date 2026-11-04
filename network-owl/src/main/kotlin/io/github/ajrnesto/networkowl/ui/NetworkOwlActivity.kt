@@ -1,10 +1,14 @@
 package io.github.ajrnesto.networkowl.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.material3.Icon
@@ -21,12 +25,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.ajrnesto.networkowl.NetworkOwl
 import io.github.ajrnesto.networkowl.R
 import io.github.ajrnesto.networkowl.storage.SharedPreferencesSource
 
 internal class NetworkOwlActivity : ComponentActivity() {
+    private val requestNotifications = registerForActivityResult(RequestPermission()) { granted ->
+        if (granted) NetworkOwl.store.onChange?.invoke()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -35,7 +44,17 @@ internal class NetworkOwlActivity : ComponentActivity() {
                 InspectorApp()
             }
         }
+        if (savedInstanceState == null && needsNotificationPermission()) {
+            requestNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
+
+    // onChange is set only when install() enabled the notification.
+    private fun needsNotificationPermission(): Boolean =
+        NetworkOwl.store.onChange != null &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
 }
 
 private enum class Section(@StringRes val label: Int, @DrawableRes val icon: Int) {
