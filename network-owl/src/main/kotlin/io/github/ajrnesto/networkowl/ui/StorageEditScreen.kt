@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,15 +26,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -105,14 +102,16 @@ internal fun StorageEditScreen(source: StorageSource, key: String, onClose: () -
                 },
                 actions = {
                     if (entry?.editable == true) {
-                        TextButton(
+                        Button(
                             onClick = { output?.let { value -> write { source.put(key, entry.type, value) } } },
                             enabled = output != null,
+                            modifier = Modifier.padding(end = 8.dp),
                         ) {
                             Text(stringResource(R.string.network_owl_storage_save))
                         }
                     }
                 },
+                colors = inspectorTopBarColors(),
             )
         },
         snackbarHost = { SnackbarHost(snackbar) },
@@ -226,37 +225,22 @@ private fun JsonEditor(
     padding: PaddingValues,
     onDelete: () -> Unit,
 ) {
-    val colors = Inspector.colors
     Column(
         Modifier
             .padding(padding)
             .imePadding(),
     ) {
-        SingleChoiceSegmentedButtonRow(
-            Modifier
+        val canSwitch = draft.committed() != null
+        ConnectedToggleGroup(
+            options = EditMode.entries,
+            selected = draft.mode,
+            label = { stringResource(if (it == EditMode.Fields) R.string.network_owl_edit_fields else R.string.network_owl_edit_raw) },
+            onSelect = { mode -> draft.switchTo(mode)?.let(onDraftChange) },
+            enabled = { mode -> mode == draft.mode || canSwitch },
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
-        ) {
-            EditMode.entries.forEachIndexed { index, mode ->
-                SegmentedButton(
-                    selected = draft.mode == mode,
-                    onClick = { draft.switchTo(mode)?.let(onDraftChange) },
-                    enabled = draft.mode == mode || draft.committed() != null,
-                    shape = SegmentedButtonDefaults.itemShape(index, EditMode.entries.size),
-                    colors = SegmentedButtonDefaults.colors(
-                        activeContainerColor = colors.primary.copy(alpha = 0.12f),
-                        activeContentColor = colors.primary,
-                        activeBorderColor = colors.divider,
-                        inactiveContainerColor = colors.background,
-                        inactiveContentColor = colors.onBackgroundMuted,
-                        inactiveBorderColor = colors.divider,
-                    ),
-                    label = {
-                        Text(stringResource(if (mode == EditMode.Fields) R.string.network_owl_edit_fields else R.string.network_owl_edit_raw))
-                    },
-                )
-            }
-        }
+        )
 
         when (draft.mode) {
             EditMode.Fields -> LazyColumn(
@@ -407,7 +391,7 @@ private fun CodeField(
                         isError = isError,
                         interactionSource = interactionSource,
                         colors = fieldColors,
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(12.dp),
                     )
                 },
             )

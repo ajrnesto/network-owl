@@ -34,6 +34,7 @@ internal fun StorageDetailScreen(source: StorageSource, onEdit: (String) -> Unit
                     }
                 },
                 title = { Text(text = source.name, style = Inspector.codeStyle) },
+                colors = inspectorTopBarColors(),
             )
         },
     ) { padding ->

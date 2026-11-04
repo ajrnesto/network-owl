@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -19,7 +20,6 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -88,6 +88,7 @@ internal fun TransactionDetailScreen(
                         )
                     },
                     actions = { ExportMenu(transaction) },
+                    colors = inspectorTopBarColors(),
                 )
                 PrimaryTabRow(selectedTabIndex = tab, containerColor = MaterialTheme.colorScheme.background) {
                     tabs.forEachIndexed { index, label ->
@@ -167,8 +168,9 @@ private fun OverviewTab(transaction: HttpTransaction, padding: PaddingValues) {
 
     SelectionContainer {
         LazyColumn(contentPadding = padding) {
-            items(fields) { (label, value) ->
-                Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp)) {
+            item { Spacer(Modifier.height(12.dp)) }
+            itemsIndexed(fields) { index, (label, value) ->
+                SegmentedItem(index, fields.size, onClick = null) {
                     Text(
                         text = stringResource(label),
                         style = MaterialTheme.typography.labelMedium,
@@ -181,8 +183,8 @@ private fun OverviewTab(transaction: HttpTransaction, padding: PaddingValues) {
                         modifier = Modifier.padding(top = 2.dp),
                     )
                 }
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             }
+            item { Spacer(Modifier.height(24.dp)) }
         }
     }
 }

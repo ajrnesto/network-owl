@@ -8,8 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.ShortNavigationBar
+import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -59,9 +59,9 @@ private fun InspectorApp() {
 
 @Composable
 private fun SectionBar(selected: Section, onSelect: (Section) -> Unit) {
-    NavigationBar(containerColor = Inspector.colors.background) {
+    ShortNavigationBar(containerColor = Inspector.colors.background) {
         Section.entries.forEach { section ->
-            NavigationBarItem(
+            ShortNavigationBarItem(
                 selected = section == selected,
                 onClick = { onSelect(section) },
                 icon = { Icon(painterResource(section.icon), contentDescription = null) },
@@ -78,26 +78,29 @@ private fun NetworkSection(bottomBar: @Composable () -> Unit) {
     var selectedId by rememberSaveable { mutableStateOf<Long?>(null) }
     var jsonMode by rememberSaveable { mutableStateOf(JsonViewMode.Code) }
     var wrapCode by rememberSaveable { mutableStateOf(true) }
-    val selected = selectedId?.let { id -> transactions.firstOrNull { it.id == id } }
+    val shownId = selectedId?.takeIf { id -> transactions.any { it.id == id } }
 
-    if (selected == null) {
-        TransactionListScreen(
-            transactions = transactions,
-            onSelect = { selectedId = it },
-            onClear = store::clear,
-            bottomBar = bottomBar,
-        )
-    } else {
-        BackHandler { selectedId = null }
-        TransactionDetailScreen(
-            transaction = selected,
-            jsonOptions = JsonViewOptions(jsonMode, wrapCode),
-            onJsonOptionsChange = { options ->
-                jsonMode = options.mode
-                wrapCode = options.wrap
-            },
-            onBack = { selectedId = null },
-        )
+    BackHandler(enabled = shownId != null) { selectedId = null }
+    DrillIn(target = shownId, depth = { if (it == null) 0 else 1 }) { id ->
+        val selected = id?.let { transactions.firstOrNull { it.id == id } }
+        if (selected == null) {
+            TransactionListScreen(
+                transactions = transactions,
+                onSelect = { selectedId = it },
+                onClear = store::clear,
+                bottomBar = bottomBar,
+            )
+        } else {
+            TransactionDetailScreen(
+                transaction = selected,
+                jsonOptions = JsonViewOptions(jsonMode, wrapCode),
+                onJsonOptionsChange = { options ->
+                    jsonMode = options.mode
+                    wrapCode = options.wrap
+                },
+                onBack = { selectedId = null },
+            )
+        }
     }
 }
 
@@ -112,23 +115,29 @@ private fun StorageSection(bottomBar: @Composable () -> Unit) {
     }
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
     var editingKey by rememberSaveable { mutableStateOf<String?>(null) }
-    val selected = selectedId?.let { id -> (dataStores + sharedPreferences).firstOrNull { it.id == id } }
-    val editing = editingKey
+    val sources = dataStores + sharedPreferences
+    val route = selectedId?.takeIf { id -> sources.any { it.id == id } }
+        ?.let { StorageRoute(it, editingKey) }
+        ?: StorageRoute(null, null)
 
-    when {
-        selected == null -> StorageListScreen(
-            dataStores = dataStores,
-            sharedPreferences = sharedPreferences,
-            onSelect = { selectedId = it },
-            bottomBar = bottomBar,
-        )
-        editing != null -> {
-            BackHandler { editingKey = null }
-            StorageEditScreen(source = selected, key = editing, onClose = { editingKey = null })
-        }
-        else -> {
-            BackHandler { selectedId = null }
-            StorageDetailScreen(source = selected, onEdit = { editingKey = it }, onBack = { selectedId = null })
+    BackHandler(enabled = route.sourceId != null) {
+        if (route.key != null) editingKey = null else selectedId = null
+    }
+    DrillIn(target = route, depth = StorageRoute::depth) { shown ->
+        val selected = shown.sourceId?.let { id -> sources.firstOrNull { it.id == id } }
+        when {
+            selected == null -> StorageListScreen(
+                dataStores = dataStores,
+                sharedPreferences = sharedPreferences,
+                onSelect = { selectedId = it },
+                bottomBar = bottomBar,
+            )
+            shown.key != null -> StorageEditScreen(source = selected, key = shown.key, onClose = { editingKey = null })
+            else -> StorageDetailScreen(source = selected, onEdit = { editingKey = it }, onBack = { selectedId = null })
         }
     }
+}
+
+private data class StorageRoute(val sourceId: String?, val key: String?) {
+    val depth: Int get() = if (sourceId == null) 0 else if (key == null) 1 else 2
 }

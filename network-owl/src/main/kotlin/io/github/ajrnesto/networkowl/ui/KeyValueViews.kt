@@ -1,5 +1,6 @@
 package io.github.ajrnesto.networkowl.ui
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +42,8 @@ internal fun LazyListScope.keyValueRows(items: List<KeyValueItem>, onClick: ((In
         Column(
             Modifier
                 .codeBlockSegment(index, items.size, colors.codeBackground)
-                .then(if (onClick != null) Modifier.clickable { onClick(index) } else Modifier),
+                .then(if (onClick != null) Modifier.clickable { onClick(index) } else Modifier)
+                .animateContentSize(InspectorMotion.defaultSpatial()),
         ) {
             if (index > 0) HorizontalDivider(color = colors.divider)
             Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {

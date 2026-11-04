@@ -14,15 +14,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -81,16 +79,23 @@ internal fun LazyListScope.jsonModeSelector(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            ModeButtons(mode, onModeChange, colors, Modifier.weight(1f))
+            ConnectedToggleGroup(
+                options = JsonViewMode.entries,
+                selected = mode,
+                label = { stringResource(it.label) },
+                onSelect = onModeChange,
+                modifier = Modifier.weight(1f),
+            )
             if (mode == JsonViewMode.Code) {
                 FilterChip(
                     selected = wrap,
                     onClick = { onWrapChange(!wrap) },
                     label = { Text(stringResource(R.string.network_owl_wrap)) },
+                    shape = CircleShape,
                     colors = FilterChipDefaults.filterChipColors(
                         containerColor = colors.background,
                         labelColor = colors.onBackgroundMuted,
-                        selectedContainerColor = colors.primary.copy(alpha = 0.12f),
+                        selectedContainerColor = colors.primary.copy(alpha = 0.14f),
                         selectedLabelColor = colors.primary,
                     ),
                     border = FilterChipDefaults.filterChipBorder(
@@ -101,33 +106,6 @@ internal fun LazyListScope.jsonModeSelector(
                     ),
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun ModeButtons(
-    mode: JsonViewMode,
-    onModeChange: (JsonViewMode) -> Unit,
-    colors: NetworkOwlColors,
-    modifier: Modifier,
-) {
-    SingleChoiceSegmentedButtonRow(modifier) {
-        JsonViewMode.entries.forEachIndexed { index, option ->
-            SegmentedButton(
-                selected = option == mode,
-                onClick = { onModeChange(option) },
-                shape = SegmentedButtonDefaults.itemShape(index, JsonViewMode.entries.size),
-                colors = SegmentedButtonDefaults.colors(
-                    activeContainerColor = colors.primary.copy(alpha = 0.12f),
-                    activeContentColor = colors.primary,
-                    activeBorderColor = colors.divider,
-                    inactiveContainerColor = colors.background,
-                    inactiveContentColor = colors.onBackgroundMuted,
-                    inactiveBorderColor = colors.divider,
-                ),
-                label = { Text(stringResource(option.label)) },
-            )
         }
     }
 }
@@ -313,14 +291,14 @@ internal fun Modifier.codeBlockSegment(index: Int, count: Int, color: Color): Mo
     val first = index == 0
     val last = index == count - 1
     val shape = RoundedCornerShape(
-        topStart = if (first) 10.dp else 0.dp,
-        topEnd = if (first) 10.dp else 0.dp,
-        bottomStart = if (last) 10.dp else 0.dp,
-        bottomEnd = if (last) 10.dp else 0.dp,
+        topStart = if (first) 16.dp else 0.dp,
+        topEnd = if (first) 16.dp else 0.dp,
+        bottomStart = if (last) 16.dp else 0.dp,
+        bottomEnd = if (last) 16.dp else 0.dp,
     )
     return fillMaxWidth()
         .padding(horizontal = 16.dp)
         .background(color, shape)
         .padding(horizontal = 12.dp)
-        .padding(top = if (first) 10.dp else 0.dp, bottom = if (last) 10.dp else 0.dp)
+        .padding(top = if (first) 12.dp else 0.dp, bottom = if (last) 12.dp else 0.dp)
 }

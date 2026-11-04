@@ -1,32 +1,39 @@
 package io.github.ajrnesto.networkowl.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,16 +53,20 @@ internal fun TransactionListScreen(
     onClear: () -> Unit,
     bottomBar: @Composable () -> Unit,
 ) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         bottomBar = bottomBar,
         topBar = {
-            TopAppBar(
+            LargeTopAppBar(
                 title = { Text(stringResource(R.string.network_owl_list_title)) },
                 actions = {
                     IconButton(onClick = onClear, enabled = transactions.isNotEmpty()) {
                         Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.network_owl_clear))
                     }
                 },
+                colors = inspectorTopBarColors(),
+                scrollBehavior = scrollBehavior,
             )
         },
     ) { padding ->
@@ -69,22 +80,21 @@ internal fun TransactionListScreen(
             }
         } else {
             LazyColumn(contentPadding = padding) {
-                items(transactions, key = { it.id }) { transaction ->
-                    TransactionRow(transaction, onClick = { onSelect(transaction.id) })
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                itemsIndexed(transactions, key = { _, transaction -> transaction.id }) { index, transaction ->
+                    SegmentedItem(index, transactions.size, onClick = { onSelect(transaction.id) }) {
+                        TransactionRow(transaction)
+                    }
                 }
+                item { Spacer(Modifier.height(16.dp)) }
             }
         }
     }
 }
 
 @Composable
-private fun TransactionRow(transaction: HttpTransaction, onClick: () -> Unit) {
+private fun TransactionRow(transaction: HttpTransaction) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         StatusBadge(transaction)
@@ -124,21 +134,33 @@ private fun TransactionRow(transaction: HttpTransaction, onClick: () -> Unit) {
 @Composable
 private fun StatusBadge(transaction: HttpTransaction) {
     val color = Inspector.statusColor(transaction)
-    Text(
-        text = when (transaction.status) {
-            HttpTransaction.Status.Pending -> "…"
-            HttpTransaction.Status.Failed -> "ERR"
-            HttpTransaction.Status.Complete -> transaction.response?.code.toString()
-        },
-        style = Inspector.codeStyle,
-        fontWeight = FontWeight.SemiBold,
-        color = color,
-        textAlign = TextAlign.Center,
+    Box(
         modifier = Modifier
-            .widthIn(min = 44.dp)
-            .background(color.copy(alpha = 0.12f), RoundedCornerShape(6.dp))
-            .padding(horizontal = 6.dp, vertical = 2.dp),
-    )
+            .widthIn(min = 52.dp)
+            .heightIn(min = 28.dp)
+            .background(color.copy(alpha = 0.14f), CircleShape)
+            .padding(horizontal = 10.dp, vertical = 4.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (transaction.status == HttpTransaction.Status.Pending) {
+            val pending = stringResource(R.string.network_owl_status_pending)
+            CircularProgressIndicator(
+                color = color,
+                strokeWidth = 2.dp,
+                modifier = Modifier
+                    .size(14.dp)
+                    .semantics { contentDescription = pending },
+            )
+        } else {
+            Text(
+                text = if (transaction.status == HttpTransaction.Status.Failed) "ERR" else transaction.response?.code.toString(),
+                style = Inspector.codeStyle,
+                fontWeight = FontWeight.SemiBold,
+                color = color,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
 }
 
 private fun rowMeta(transaction: HttpTransaction): String {
