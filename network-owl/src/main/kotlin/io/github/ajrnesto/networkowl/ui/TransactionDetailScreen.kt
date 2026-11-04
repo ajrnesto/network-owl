@@ -92,7 +92,12 @@ internal fun TransactionDetailScreen(
                 )
                 PrimaryTabRow(selectedTabIndex = tab, containerColor = MaterialTheme.colorScheme.background) {
                     tabs.forEachIndexed { index, label ->
-                        Tab(selected = tab == index, onClick = { tab = index }, text = { Text(stringResource(label)) })
+                        Tab(
+                            selected = tab == index,
+                            onClick = { tab = index },
+                            text = { Text(stringResource(label)) },
+                            unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
                 }
             }
