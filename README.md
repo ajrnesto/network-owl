@@ -58,8 +58,18 @@ Open the inspector from the notification, the long-press shortcut on the app ico
 `NetworkOwl.launchIntent(context)` from your own debug entry point. Records live in memory only
 and are gone when the process dies.
 
-The notification needs `POST_NOTIFICATIONS` granted on Android 13+; network-owl declares the
-permission but never asks for it.
+The notification needs `POST_NOTIFICATIONS` granted on Android 13+. network-owl asks for it the
+first time the inspector opens, never from your own screens. To get the notification from the
+first launch, request it yourself from a debug entry point — one grant covers your app and
+network-owl:
+
+```kotlin
+val requestNotifications = registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
+
+if (NetworkOwl.isEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    requestNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+}
+```
 
 ### Config
 
